@@ -77,6 +77,7 @@ const table = new SortableTable({
     allowSorting: true,                // Allow column sorting (default: true)
     cssPrefix: 'sortable-table',       // CSS class prefix (default: 'sortable-table')
     emptyMessage: 'No data available', // Message when no data (default: 'No data available')
+    sort: { key: 'name', direction: 'asc' }, // Initial sort
 
     // Event callbacks
     onSort: (column, direction) => {...},        // Called when sorted
@@ -94,6 +95,7 @@ const columns = [
         label: 'Display Name',         // Column header text
         type: 'string',                // 'string', 'number', 'date', 'boolean'
         width: '120px',                // Optional: column width
+        hidden: false,                 // Optional: hide column (default: false)
         sortable: true,                // Optional: allow sorting (default: true)
         className: 'custom-class',     // Optional: custom header CSS class
         cellClassName: 'cell-class',   // Optional: custom cell CSS class
@@ -114,8 +116,15 @@ table.setData(newDataArray);
 // Add a single row
 table.addRow(rowData);
 
-// Remove a row by index
-table.removeRow(index);
+// Remove rows that match the predicate
+table.removeRows(predicate);
+
+// Sort by column in ascending or descending order
+table.sort(key, type, ascending);
+
+// Toggle sort order by column
+// (if key denotes the current sort column, else sort by that column in ascending order)
+table.toggleSort(key, type);
 
 // Filter data (creates a view, doesn't modify original)
 table.filter(row => row.salary > 50000);
