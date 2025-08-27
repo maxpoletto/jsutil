@@ -35,15 +35,22 @@ class SortableTable {
         this.cssPrefix = options.cssPrefix || 'sortable-table';
         this.emptyMessage = options.emptyMessage || 'No data available';
 
+        // Sorting state
+
+        if (options.sort && options.sort.key && options.sort.direction) {
+            this.currentSort = { column: options.sort.key, direction: options.sort.direction };
+        } else {
+            this.currentSort = { column: null, direction: 'asc' };
+        }
+        if (this.currentSort.column) {
+            this._sortData(this.columns.findIndex(col => col.key === this.currentSort.column),
+                this.columns.find(col => col.key === this.currentSort.column).type,
+                this.currentSort.direction === 'asc');
+        }
+
         // Pagination state
         this.currentPage = 1;
         this.totalPages = Math.ceil(this.data.length / this.rowsPerPage);
-
-        // Sorting state
-        this.currentSort = {
-            column: null,
-            direction: 'asc'
-        };
 
         // Event callbacks
         this.onSort = options.onSort || null;
@@ -103,6 +110,7 @@ class SortableTable {
 
     generateHeaderHTML() {
         return this.columns.map((col, index) => {
+            if (col.hidden) return '';
             const sortable = this.allowSorting && col.sortable !== false;
             const classes = [
                 `${this.cssPrefix}-header`,
@@ -128,7 +136,7 @@ class SortableTable {
         if (this.data.length === 0) {
             return `
                 <tr>
-                    <td colspan="${this.columns.length}" class="${this.cssPrefix}-empty">
+                    <td colspan="${this.columns.filter(col => !col.hidden).length}" class="${this.cssPrefix}-empty">
                         ${this.emptyMessage}
                     </td>
                 </tr>
@@ -144,6 +152,7 @@ class SortableTable {
             return `
                 <tr class="${this.cssPrefix}-row" data-index="${actualIndex}">
                     ${this.columns.map((col, colIndex) => {
+                        if (col.hidden) return '';
                         const value = row[colIndex] ?? '';
                         const formatted = this.formatCellValue(value, col);
                         const classes = [
@@ -312,15 +321,7 @@ class SortableTable {
         }
     }
 
-    sort(columnKey, columnType, columnIndex) {
-        const isCurrentColumn = this.currentSort.column === columnKey;
-        const newDirection = isCurrentColumn && this.currentSort.direction === 'asc' ? 'desc' : 'asc';
-
-        this.currentSort = {
-            column: columnKey,
-            direction: newDirection
-        };
-
+    _sortData(columnIndex, columnType, ascending) {
         this.data.sort((a, b) => {
             const aVal = a[columnIndex] ?? '';
             const bVal = b[columnIndex] ?? '';
@@ -342,8 +343,20 @@ class SortableTable {
                     comparison = String(aVal).toLowerCase().localeCompare(String(bVal).toLowerCase());
             }
 
-            return newDirection === 'asc' ? comparison : -comparison;
+            return ascending ? comparison : -comparison;
         });
+    }
+
+
+    sort(columnKey, columnType, columnIndex) {
+        const isCurrentColumn = this.currentSort.column === columnKey;
+        const newDirection = isCurrentColumn && this.currentSort.direction === 'asc' ? 'desc' : 'asc';
+
+        this.currentSort = {
+            column: columnKey,
+            direction: newDirection
+        };
+        this._sortData(columnIndex, columnType, newDirection === 'asc');
 
         // Reset to first page after sorting
         this.currentPage = 1;
