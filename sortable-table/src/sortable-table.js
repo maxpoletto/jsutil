@@ -40,7 +40,7 @@ class SortableTable {
         if (options.sort && options.sort.key && options.sort.direction) {
             this.currentSort = { column: options.sort.key, direction: options.sort.direction };
         } else {
-            this.currentSort = { column: null, direction: 'asc' };
+            this.currentSort = { column: null, ascending: true };
         }
 
         // Filter state
@@ -48,7 +48,7 @@ class SortableTable {
         if (this.currentSort.column) {
             this._sortData(this.columns.findIndex(col => col.key === this.currentSort.column),
                 this.columns.find(col => col.key === this.currentSort.column).type,
-                this.currentSort.direction === 'asc');
+                this.currentSort.ascending);
         }
 
         // Pagination state
@@ -274,8 +274,7 @@ class SortableTable {
             header.addEventListener('click', () => {
                 const column = header.dataset.column;
                 const type = header.dataset.type;
-                const index = parseInt(header.dataset.index);
-                this.sort(column, type, index);
+                this.toggleSort(column, type);
             });
         });
     }
@@ -362,23 +361,22 @@ class SortableTable {
         }
     }
 
-
-    sort(columnKey, columnType, columnIndex) {
+    toggleSort(columnKey, columnType) {
         const isCurrentColumn = this.currentSort.column === columnKey;
-        const newDirection = isCurrentColumn && this.currentSort.direction === 'asc' ? 'desc' : 'asc';
+        const newDirection = isCurrentColumn ? !this.currentSort.ascending : true;
 
-        this.currentSort = {
-            column: columnKey,
-            direction: newDirection
-        };
-        this._sortData(columnIndex, columnType, newDirection === 'asc');
+        this.sort(columnKey, columnType, newDirection);
+    }
 
-        // Reset to first page after sorting
+    sort(columnKey, columnType, ascending = true) {
+        this.currentSort = { column: columnKey, ascending: ascending };
+        const columnIndex = this.columns.findIndex(col => col.key === columnKey);
+        this._sortData(columnIndex, columnType, ascending);
         this.currentPage = 1;
         this.updateTable();
 
         if (this.onSort) {
-            this.onSort(columnKey, newDirection);
+            this.onSort(columnKey, ascending);
         }
     }
 
@@ -432,8 +430,8 @@ class SortableTable {
         if (this.currentSort.column) {
             const currentHeader = this.container.querySelector(`th[data-column="${this.currentSort.column}"] .sort-indicator`);
             if (currentHeader) {
-                currentHeader.className = `sort-indicator ${this.currentSort.direction}`;
-                currentHeader.textContent = this.currentSort.direction === 'asc' ? '↑' : '↓';
+                currentHeader.className = `sort-indicator ${this.currentSort.ascending ? 'asc' : 'desc'}`;
+                currentHeader.textContent = this.currentSort.ascending ? '↑' : '↓';
             }
         }
     }

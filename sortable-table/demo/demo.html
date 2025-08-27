@@ -191,7 +191,9 @@
                 <button class="btn" onclick="filterByDepartment()">Filter Engineering</button>
                 <button class="btn" onclick="clearAllFilters()">Clear Filters</button>
 
-                <button class="btn" onclick="removeRandomEmployee()">Remove Employee</button>
+                <button class="btn" onclick="removeRandomEmployee()">Remove Random Employee</button>
+                <button class="btn" onclick="removeInactiveEmployees()">Remove Inactive</button>
+                <button class="btn" onclick="toggleHiddenColumns()">Toggle Email Column</button>
             </div>
 
             <div id="main-table" class="table-container"></div>
@@ -297,7 +299,8 @@ const table = new SortableTable({
                 key: 'email',
                 label: 'Email',
                 type: 'string',
-                width: '200px'
+                width: '200px',
+                hidden: true // Initially hidden
             }
         ];
 
@@ -316,8 +319,9 @@ const table = new SortableTable({
                 data: originalData,
                 columns: columns,
                 rowsPerPage: 20,
-                onSort: (column, direction) => {
-                    console.log(`Table sorted by ${column} in ${direction} order`);
+                sort: { key: 'startDate', ascending: false }, // Initially sort by start date (newest first)
+                onSort: (column, ascending) => {
+                    console.log(`Table sorted by ${column} in ${ascending ? 'ascending' : 'descending'} order`);
                 },
                 onPageChange: (page, totalPages) => {
                     updateStats();
@@ -359,19 +363,47 @@ const table = new SortableTable({
         function removeRandomEmployee() {
             if (mainTable.data.length > 0) {
                 const randomIndex = Math.floor(Math.random() * mainTable.data.length);
-                const removedEmployee = mainTable.data[randomIndex];
+                const employeeToRemove = mainTable.data[randomIndex];
+                const employeeId = employeeToRemove[0]; // ID is index 0
+                const employeeName = employeeToRemove[1]; // name is index 1
 
-                // Remove from original data too
-                const originalIndex = originalData.findIndex(e => e[0] === removedEmployee[0]); // compare IDs
-                if (originalIndex !== -1) {
-                    originalData.splice(originalIndex, 1);
-                }
+                // Use new removeRows API - much cleaner!
+                const removed = mainTable.removeRows(row => row[0] === employeeId);
 
-                mainTable.removeRow(randomIndex);
+                // Also remove from our original data array for stats
+                originalData = originalData.filter(e => e[0] !== employeeId);
+
                 updateStats();
 
-                showNotification(`Removed ${removedEmployee[1]}`); // name is index 1
+                if (removed > 0) {
+                    showNotification(`Removed ${employeeName}`);
+                }
             }
+        }
+
+        function removeInactiveEmployees() {
+            // Remove all inactive employees (active is index 6)
+            const removed = mainTable.removeRows(row => !row[6]);
+
+            // Also remove from original data for stats
+            originalData = originalData.filter(e => e[6]); // keep only active
+
+            updateStats();
+
+            showNotification(`Removed ${removed} inactive employee${removed !== 1 ? 's' : ''}`);
+        }
+
+        function toggleHiddenColumns() {
+            // Toggle the hidden property of the email column
+            const emailColumn = columns.find(col => col.key === 'email');
+            emailColumn.hidden = !emailColumn.hidden;
+
+            // Recreate the table with updated column visibility
+            initializeMainTable();
+            updateStats();
+
+            const action = emailColumn.hidden ? 'Hidden' : 'Shown';
+            showNotification(`${action} email column`);
         }
 
         function filterHighEarners() {

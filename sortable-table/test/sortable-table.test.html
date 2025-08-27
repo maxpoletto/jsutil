@@ -115,7 +115,8 @@
             <div class="controls">
                 <button onclick="addRandomRow()">Add Random Row</button>
                 <button onclick="removeLastRow()">Remove Last Row</button>
-                <button onclick="filterHighValues()">Filter High Values (>50)</button>
+                <button onclick="filterHighValues()">Filter High Salaries (>80k)</button>
+                <button onclick="removeHighSalaries()">Remove High Salaries (>80k)</button>
                 <button onclick="clearFilter()">Clear Filter</button>
 
             </div>
@@ -137,9 +138,20 @@
             </div>
         </div>
 
+        <!-- New Features -->
+        <div class="test-section">
+            <h2>4. Visibility and Sorting</h2>
+            <div class="controls">
+                <button onclick="testHiddenColumns()">Test Hidden Columns</button>
+                <button onclick="testInitialSort()">Test Initial Sort</button>
+            </div>
+            <div id="features-table" class="table-container"></div>
+            <div id="features-results" class="test-results"></div>
+        </div>
+
         <!-- Edge Cases -->
         <div class="test-section">
-            <h2>4. Edge Cases</h2>
+            <h2>5. Edge Cases</h2>
             <div class="controls">
                 <button onclick="testEmptyData()">Test Empty Data</button>
                 <button onclick="testSingleRow()">Test Single Row</button>
@@ -153,7 +165,7 @@
 
         <!-- Performance Tests -->
         <div class="test-section">
-            <h2>5. Performance Tests</h2>
+            <h2>6. Performance Tests</h2>
             <div class="controls">
                 <button onclick="runPerformanceTests()">Run Performance Tests</button>
             </div>
@@ -212,6 +224,7 @@
         let edgeCaseTable;
         let compactTable;
         let spaciousTable;
+        let featuresTable;
 
         // Initialize demo tables
         document.addEventListener('DOMContentLoaded', () => {
@@ -227,14 +240,14 @@
                 data: data,
                 columns: columns,
                 rowsPerPage: 15,
-                onSort: (column, direction) => {
-                    console.log(`Sorted by ${column} ${direction}`);
+                onSort: (column, ascending) => {
+                    console.log(`Sorted by ${column} ${ascending ? 'ascending' : 'descending'}`);
                 },
                 onPageChange: (page, totalPages) => {
                     console.log(`Page changed to ${page} of ${totalPages}`);
                 },
                 onRowClick: (data, index) => {
-                    alert(`Clicked row: ${data.name} (ID: ${data.id})`);
+                    alert(`Clicked row: ${data[1]} (ID: ${data[0]})`);
                 }
             });
         }
@@ -286,15 +299,34 @@
                 results.push('✅ Table created successfully with test data');
                 results.push(`✅ Pagination calculated correctly: ${testTable.totalPages} pages`);
 
-                // Test 3: Sorting
-                const originalFirstItem = testTable.data[0][1];
-                testTable.sort('name', 'string', 1);
-                const sortedFirstItem = testTable.data[0][1];
-
-                if (originalFirstItem !== sortedFirstItem) {
-                    results.push('✅ Sorting functionality works');
+                // Test 3: Sorting (ascending)
+                testTable.sort('name', 'string', true);
+                let isAscending = true;
+                for (let i = 1; i < testTable.data.length; i++) {
+                    if (testTable.data[i - 1][1] > testTable.data[i][1]) {
+                        isAscending = false;
+                        break;
+                    }
+                }
+                if (isAscending) {
+                    results.push('✅ Ascending sort order is correct');
                 } else {
-                    results.push('⚠️ Sorting may not have changed order (could be coincidence)');
+                    results.push('❌ Ascending sort order is incorrect');
+                }
+
+                // Test 3b: Sorting (descending)
+                testTable.sort('name', 'string', false);
+                let isDescending = true;
+                for (let i = 1; i < testTable.data.length; i++) {
+                    if (testTable.data[i - 1][1] < testTable.data[i][1]) {
+                        isDescending = false;
+                        break;
+                    }
+                }
+                if (isDescending) {
+                    results.push('✅ Descending sort order is correct');
+                } else {
+                    results.push('❌ Descending sort order is incorrect');
                 }
 
                 // Test 4: Pagination
@@ -343,7 +375,7 @@
 
             // Test 2: Sorting performance
             console.time(`Sorting ${largeData.length} rows`);
-            perfTable.sort('salary', 'number', 3);
+            perfTable.toggleSort('salary', 'number');
             console.timeEnd(`Sorting ${largeData.length} rows`);
 
             // Test 3: Multiple page changes
@@ -368,7 +400,7 @@
                 return;
             }
             const newRow = generateTestData(1)[0];
-            newRow.id = Date.now(); // Unique ID
+            newRow[0] = Date.now(); // Unique ID
             demoTable.addRow(newRow);
         }
 
@@ -378,8 +410,20 @@
                 return;
             }
             if (demoTable.data.length > 0) {
-                demoTable.removeRow(demoTable.data.length - 1);
+                // Get the last row's ID and remove by ID (more reliable than index)
+                const lastRowId = demoTable.data[demoTable.data.length - 1][0];
+                const removed = demoTable.removeRows(row => row[0] === lastRowId);
+                console.log(`Removed ${removed} row(s)`);
             }
+        }
+
+        function removeHighSalaries() {
+            if (!demoTable) {
+                console.error('Demo table not initialized');
+                return;
+            }
+            const removed = demoTable.removeRows(row => row[3] > 80000); // salary is index 3
+            console.log(`Removed ${removed} high salary row(s)`);
         }
 
         function filterHighValues() {
@@ -387,7 +431,7 @@
                 console.error('Demo table not initialized');
                 return;
             }
-            demoTable.filter(row => row[3] > 70000); // salary is index 3
+            demoTable.filter(row => row[3] > 80000); // salary is index 3
         }
 
         function clearFilter() {
@@ -396,6 +440,57 @@
                 return;
             }
             demoTable.clearFilter();
+        }
+
+        // New Features Tests
+        function testHiddenColumns() {
+            if (featuresTable) {
+                featuresTable.destroy();
+            }
+
+            const testData = generateTestData(10);
+            const columnsWithHidden = [
+                { key: 'id', label: 'ID', type: 'number', width: '60px' },
+                { key: 'name', label: 'Name', type: 'string', width: '150px' },
+                { key: 'department', label: 'Department', type: 'string', width: '120px' },
+                { key: 'salary', label: 'Salary', type: 'number', width: '100px', hidden: true }, // Hidden column
+                { key: 'city', label: 'City', type: 'string', width: '100px' },
+                { key: 'active', label: 'Active', type: 'boolean', width: '70px', formatter: (value) => value ? '✓' : '✗' }
+            ];
+
+            featuresTable = new SortableTable({
+                container: '#features-table',
+                data: testData,
+                columns: columnsWithHidden,
+                rowsPerPage: 10
+            });
+
+            document.getElementById('features-results').innerHTML =
+                '✅ Hidden columns test completed<br>' +
+                '• Salary column should be hidden<br>' +
+                '• Table should still function normally with hidden data';
+        }
+
+        function testInitialSort() {
+            if (featuresTable) {
+                featuresTable.destroy();
+            }
+
+            const testData = generateTestData(10);
+
+            featuresTable = new SortableTable({
+                container: '#features-table',
+                data: testData,
+                columns: columns.slice(0, 5), // First 5 columns only
+                rowsPerPage: 10,
+                sort: { key: 'salary', direction: 'desc' } // Initial sort by salary descending
+            });
+
+            document.getElementById('features-results').innerHTML =
+                '✅ Initial sort test completed<br>' +
+                '• Table should be sorted by salary (highest first)<br>' +
+                '• Sort indicator should show on salary column<br>' +
+                '• Filtering should maintain sort order';
         }
 
         // Edge case tests
