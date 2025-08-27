@@ -483,7 +483,7 @@
                 data: testData,
                 columns: columns.slice(0, 5), // First 5 columns only
                 rowsPerPage: 10,
-                sort: { key: 'salary', direction: 'desc' } // Initial sort by salary descending
+                sort: { column: 'salary', ascending: false } // Initial sort by salary descending
             });
 
             document.getElementById('features-results').innerHTML =

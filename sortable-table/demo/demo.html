@@ -225,7 +225,8 @@
             <div class="code-example">
 <span class="highlight">// Define your columns</span>
 const columns = [
-    { key: 'name', label: 'Name', type: 'string' },
+    { key: 'id', label: 'ID', type: 'number', hidden: true },
+    { key: 'name', label: 'Name', type: 'string', width: '180px' },
     { key: 'salary', label: 'Salary', type: 'number',
       formatter: (value) => `$${value.toLocaleString()}` },
     { key: 'startDate', label: 'Start Date', type: 'date' }
@@ -237,7 +238,8 @@ const table = new SortableTable({
     data: employeeData,
     columns: columns,
     rowsPerPage: 25,
-    onSort: (column, direction) => console.log(`Sorted by ${column}`),
+    sort: { column: 'startDate', ascending: false }, // Initially sort by start date (newest first)
+    onSort: (column, ascending) => console.log(`Sorted by ${column} in ${ascending ? 'ascending' : 'descending'} order`),
     onPageChange: (page) => console.log(`Page ${page}`),
     onRowClick: (data) => console.log('Row clicked:', data)
 });
@@ -319,7 +321,7 @@ const table = new SortableTable({
                 data: originalData,
                 columns: columns,
                 rowsPerPage: 20,
-                sort: { key: 'startDate', ascending: false }, // Initially sort by start date (newest first)
+                sort: { column: 'startDate', ascending: false }, // Initially sort by start date (newest first)
                 onSort: (column, ascending) => {
                     console.log(`Table sorted by ${column} in ${ascending ? 'ascending' : 'descending'} order`);
                 },

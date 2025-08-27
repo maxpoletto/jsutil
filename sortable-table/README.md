@@ -77,10 +77,10 @@ const table = new SortableTable({
     allowSorting: true,                // Allow column sorting (default: true)
     cssPrefix: 'sortable-table',       // CSS class prefix (default: 'sortable-table')
     emptyMessage: 'No data available', // Message when no data (default: 'No data available')
-    sort: { key: 'name', direction: 'asc' }, // Initial sort
+    sort: { column: 'name', ascending: true }, // Initial sort
 
     // Event callbacks
-    onSort: (column, direction) => {...},        // Called when sorted
+    onSort: (column, ascending) => {...},        // Called when sorted
     onPageChange: (page, totalPages) => {...},   // Called when page changes
     onRowClick: (data, index, event) => {...}    // Called when row is clicked
 });

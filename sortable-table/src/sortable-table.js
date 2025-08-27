@@ -37,8 +37,8 @@ class SortableTable {
 
         // Sorting state
 
-        if (options.sort && options.sort.key && options.sort.direction) {
-            this.currentSort = { column: options.sort.key, direction: options.sort.direction };
+        if (options.sort && options.sort.column) {
+            this.currentSort = { column: options.sort.column, ascending: options.sort.ascending ?? true };
         } else {
             this.currentSort = { column: null, ascending: true };
         }
@@ -363,9 +363,9 @@ class SortableTable {
 
     toggleSort(columnKey, columnType) {
         const isCurrentColumn = this.currentSort.column === columnKey;
-        const newDirection = isCurrentColumn ? !this.currentSort.ascending : true;
+        const newOrder = isCurrentColumn ? !this.currentSort.ascending : true;
 
-        this.sort(columnKey, columnType, newDirection);
+        this.sort(columnKey, columnType, newOrder);
     }
 
     sort(columnKey, columnType, ascending = true) {
