@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SortableTable Demo</title>
-    <link rel="stylesheet" href="../src/sortable-table.css">
+    <link rel="stylesheet" href="/src/sortable-table.css">
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             margin: 0;
             padding: 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #f0f0f0;
             min-height: 100vh;
         }
         
@@ -21,14 +21,13 @@
         
         .header {
             text-align: center;
-            color: white;
+            color: #333;
             margin-bottom: 30px;
         }
         
         .header h1 {
             font-size: 2.5rem;
             margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
         }
         
         .header p {
@@ -67,35 +66,12 @@
             font-weight: 500;
             transition: all 0.2s ease;
             font-size: 14px;
-        }
-        
-        .btn-primary {
-            background: #667eea;
-            color: white;
-        }
-        
-        .btn-primary:hover {
-            background: #5a67d8;
-            transform: translateY(-2px);
-        }
-        
-        .btn-secondary {
             background: #e2e8f0;
             color: #4a5568;
         }
         
-        .btn-secondary:hover {
+        .btn:hover {
             background: #cbd5e0;
-            transform: translateY(-2px);
-        }
-        
-        .btn-danger {
-            background: #f56565;
-            color: white;
-        }
-        
-        .btn-danger:hover {
-            background: #e53e3e;
             transform: translateY(-2px);
         }
         
@@ -132,7 +108,7 @@
             color: #64748b;
             font-size: 0.9rem;
         }
-        
+
         .feature-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -159,18 +135,19 @@
         }
         
         .code-example {
-            background: #1a202c;
-            color: #e2e8f0;
+            background: #f0f0f0;
+            color: darkslategrey;
             padding: 20px;
             border-radius: 8px;
             font-family: 'Monaco', 'Menlo', monospace;
             font-size: 14px;
             margin: 20px 0;
             overflow-x: auto;
+            white-space: pre-wrap;
         }
         
         .highlight {
-            color: #68d391;
+            color: #32ad61;
         }
         
         @media (max-width: 768px) {
@@ -206,15 +183,15 @@
         <!-- Main Demo -->
         <div class="demo-section">
             <h2>Interactive Demo</h2>
-            <p>Try out all the features: click column headers to sort, use pagination controls, and click the page number to jump to a specific page.</p>
+            <p>Click column headers to sort, use pagination controls, and click the page number to jump to a specific page.</p>
             
             <div class="controls">
-                <button class="btn btn-primary" onclick="addRandomEmployee()">Add Employee</button>
-                <button class="btn btn-secondary" onclick="filterHighEarners()">Show High Earners</button>
-                <button class="btn btn-secondary" onclick="filterByDepartment()">Filter Engineering</button>
-                <button class="btn btn-secondary" onclick="clearAllFilters()">Clear Filters</button>
+                <button class="btn" onclick="addRandomEmployee()">Add Employee</button>
+                <button class="btn" onclick="filterHighEarners()">Show High Earners</button>
+                <button class="btn" onclick="filterByDepartment()">Filter Engineering</button>
+                <button class="btn" onclick="clearAllFilters()">Clear Filters</button>
 
-                <button class="btn btn-danger" onclick="removeRandomEmployee()">Remove Employee</button>
+                <button class="btn" onclick="removeRandomEmployee()">Remove Employee</button>
             </div>
             
             <div id="main-table" class="table-container"></div>
@@ -239,53 +216,9 @@
             </div>
         </div>
         
-        <!-- Features -->
-        <div class="demo-section">
-            <h2>Key Features</h2>
-            <div class="feature-grid">
-                <div class="feature-card">
-                    <h3>🔄 Smart Sorting</h3>
-                    <ul>
-                        <li>Multi-type sorting (string, number, date, boolean)</li>
-                        <li>Visual sort indicators</li>
-                        <li>Toggle ascending/descending</li>
-                        <li>Custom sort functions</li>
-                    </ul>
-                </div>
-                <div class="feature-card">
-                    <h3>📄 Advanced Pagination</h3>
-                    <ul>
-                        <li>First/Previous/Next/Last navigation</li>
-                        <li>Clickable page numbers for quick jumps</li>
-                        <li>Configurable page sizes</li>
-                        <li>Keyboard navigation (Enter/Escape)</li>
-                    </ul>
-                </div>
-                <div class="feature-card">
-                    <h3>🎨 Highly Customizable</h3>
-                    <ul>
-                        <li>CSS custom properties for theming</li>
-                        <li>Multiple built-in themes</li>
-                        <li>Responsive design</li>
-                        <li>Dark mode support</li>
-                    </ul>
-                </div>
-                <div class="feature-card">
-                    <h3>⚡ Performance Optimized</h3>
-                    <ul>
-                        <li>Virtual pagination (only renders visible rows)</li>
-                        <li>Efficient sorting algorithms</li>
-                        <li>Minimal DOM manipulation</li>
-                        <li>Handles large datasets smoothly</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-        
         <!-- Usage Example -->
         <div class="demo-section">
             <h2>Usage Example</h2>
-            <p>Here's how easy it is to create a sortable table:</p>
             
             <div class="code-example">
 <span class="highlight">// Define your columns</span>
@@ -310,7 +243,7 @@ const table = new SortableTable({
         </div>
     </div>
 
-    <script src="../src/sortable-table.js"></script>
+    <script src="/src/sortable-table.js"></script>
     <script>
         // Sample data for the demo
         const departments = ['Engineering', 'Marketing', 'Sales', 'HR', 'Finance', 'Operations', 'Design', 'Support'];
@@ -420,7 +353,7 @@ const table = new SortableTable({
             updateStats();
             
             // Show notification
-            showNotification(`Added ${newEmployee[1]} to ${newEmployee[2]}`, 'success'); // name and department
+            showNotification(`Added ${newEmployee[1]} to ${newEmployee[2]}`); // name and department
         }
 
         function removeRandomEmployee() {
@@ -437,39 +370,37 @@ const table = new SortableTable({
                 mainTable.removeRow(randomIndex);
                 updateStats();
                 
-                showNotification(`Removed ${removedEmployee[1]}`, 'info'); // name is index 1
+                showNotification(`Removed ${removedEmployee[1]}`); // name is index 1
             }
         }
 
         function filterHighEarners() {
             mainTable.filter(employee => employee[3] >= 80000); // salary is index 3
             updateStats();
-            showNotification('Showing only high earners (≥$80,000)', 'info');
+            showNotification('Showing only high earners (≥$80,000)');
         }
 
         function filterByDepartment() {
             mainTable.filter(employee => employee[2] === 'Engineering'); // department is index 2
             updateStats();
-            showNotification('Showing only Engineering department', 'info');
+            showNotification('Showing only Engineering department');
         }
 
         function clearAllFilters() {
             mainTable.clearFilter();
             updateStats();
-            showNotification('All filters cleared', 'success');
+            showNotification('All filters cleared');
         }
 
-
-
         // Notification system
-        function showNotification(message, type = 'info') {
+        function showNotification(message) {
             const notification = document.createElement('div');
             notification.style.cssText = `
                 position: fixed;
                 top: 20px;
                 right: 20px;
                 padding: 12px 20px;
-                background: ${type === 'success' ? '#48bb78' : type === 'error' ? '#f56565' : '#4299e1'};
+                background: #4299e1;
                 color: white;
                 border-radius: 8px;
                 box-shadow: 0 4px 12px rgba(0,0,0,0.2);
@@ -479,7 +410,7 @@ const table = new SortableTable({
                 transition: transform 0.3s ease;
             `;
             notification.textContent = message;
-            
+
             document.body.appendChild(notification);
             
             // Animate in

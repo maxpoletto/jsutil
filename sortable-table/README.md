@@ -172,7 +172,6 @@ table.destroy();
 <div id="table" class="theme-solid"></div>
 ```
 
-
 ## Examples: a basic employee table
 ```javascript
 const employees = [
@@ -201,6 +200,7 @@ const table = new SortableTable({
 
 ## Browser Support
 
+Tested on modern versions of Chrome, Firefox, Safari, and Edge. Technically should work with:
 - Chrome 60+
 - Firefox 55+
 - Safari 12+
@@ -212,3 +212,5 @@ const table = new SortableTable({
 - [src/sortable-table.css](src/sortable-table.css) - Styles and themes
 - [demo/demo.html](demo/demo.html) - Interactive demo page
 - [test/sortable-table.test.html](test/sortable-table.test.html) - Tests
+
+To run demo or tests, run `make test-server` and open `http://localhost:8000` in your browser.
