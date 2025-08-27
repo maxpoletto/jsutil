@@ -1,7 +1,34 @@
 {
-  "name": "@ymaxpoletto/sortable-table",
+  "name": "@maxpoletto/sortable-table",
   "version": "1.0.0",
+  "description": "A reusable, configurable table component with sorting, filtering, and pagination",
   "main": "src/sortable-table.js",
-  "files": ["src/", "dist/"],
-  "keywords": ["table", "sortable", "pagination"]
+  "browser": "src/sortable-table.js",
+  "files": [
+    "src/",
+    "dist/",
+    "README.md"
+  ],
+  "keywords": [
+    "table",
+    "sortable",
+    "pagination",
+    "javascript",
+    "browser",
+    "ui",
+    "component"
+  ],
+  "author": "maxpoletto",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/maxpoletto/jsutil.git"
+  },
+  "bugs": {
+    "url": "https://github.com/maxpoletto/jsutil/issues"
+  },
+  "homepage": "https://github.com/maxpoletto/jsutil/tree/main/sortable-table#readme",
+  "engines": {
+    "node": ">=12.0.0"
+  },
 }
