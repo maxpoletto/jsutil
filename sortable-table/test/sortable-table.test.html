@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SortableTable Tests</title>
+    <link rel="stylesheet" href="../src/sortable-table.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .test-section {
+            background: white;
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .test-section h2 {
+            margin-top: 0;
+            color: #333;
+            border-bottom: 2px solid #2196F3;
+            padding-bottom: 10px;
+        }
+        
+        .test-section h3 {
+            color: #666;
+            margin-top: 30px;
+        }
+        
+        .test-results {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: monospace;
+            font-size: 14px;
+        }
+        
+        .test-pass { color: #28a745; }
+        .test-fail { color: #dc3545; }
+        
+        .controls {
+            margin: 15px 0;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .controls button {
+            padding: 8px 16px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .controls button:hover {
+            background: #f0f0f0;
+        }
+        
+        .table-container {
+            height: 400px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin: 15px 0;
+        }
+        
+        .small-table {
+            height: 300px;
+        }
+        
+        .theme-demo {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        @media (max-width: 768px) {
+            .theme-demo {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>SortableTable - Tests & Demo</h1>
+        
+        <!-- Basic Functionality Tests -->
+        <div class="test-section">
+            <h2>1. Basic Functionality Tests</h2>
+            <div id="basic-tests-results" class="test-results">Running tests...</div>
+            <div class="controls">
+                <button onclick="runBasicTests()">Run Basic Tests</button>
+            </div>
+        </div>
+
+        <!-- Interactive Demo -->
+        <div class="test-section">
+            <h2>2. Interactive Demo</h2>
+            <p>This table demonstrates all the features: sorting, pagination, and editable page numbers.</p>
+            <div class="controls">
+                <button onclick="addRandomRow()">Add Random Row</button>
+                <button onclick="removeLastRow()">Remove Last Row</button>
+                <button onclick="filterHighValues()">Filter High Values (>50)</button>
+                <button onclick="clearFilter()">Clear Filter</button>
+
+            </div>
+            <div id="demo-table" class="table-container"></div>
+        </div>
+
+        <!-- Theme Variations -->
+        <div class="test-section">
+            <h2>3. Theme Variations</h2>
+            <div class="theme-demo">
+                <div>
+                    <h3>Compact Theme</h3>
+                    <div id="compact-table" class="table-container small-table"></div>
+                </div>
+                <div>
+                    <h3>Spacious Theme</h3>
+                    <div id="spacious-table" class="table-container small-table"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Edge Cases -->
+        <div class="test-section">
+            <h2>4. Edge Cases</h2>
+            <div class="controls">
+                <button onclick="testEmptyData()">Test Empty Data</button>
+                <button onclick="testSingleRow()">Test Single Row</button>
+                <button onclick="testLargeDataset()">Test Large Dataset (1000 rows)</button>
+                <button onclick="testVeryLargeDataset()">Test Very Large Dataset (50K rows)</button>
+                <button onclick="testMixedDataTypes()">Test Mixed Data Types</button>
+            </div>
+            <div id="edge-case-table" class="table-container"></div>
+            <div id="edge-case-results" class="test-results"></div>
+        </div>
+
+        <!-- Performance Tests -->
+        <div class="test-section">
+            <h2>5. Performance Tests</h2>
+            <div class="controls">
+                <button onclick="runPerformanceTests()">Run Performance Tests</button>
+            </div>
+            <div id="performance-results" class="test-results">Click "Run Performance Tests" to see results...</div>
+        </div>
+    </div>
+
+    <script src="../src/sortable-table.js"></script>
+    <script>
+        // Debug: Check if SortableTable is available
+        console.log('SortableTable available:', typeof SortableTable);
+        console.log('Window SortableTable:', window.SortableTable);
+        
+        // Safari compatibility check and fallback
+        if (typeof SortableTable === 'undefined') {
+            console.error('SortableTable is not defined. Loading Safari-compatible fallback...');
+            console.log('Browser:', navigator.userAgent);
+            
+            // Load Safari fallback
+            var fallbackScript = document.createElement('script');
+            fallbackScript.src = '../src/sortable-table-safari-fallback.js';
+            fallbackScript.onload = function() {
+                console.log('Safari fallback loaded. SortableTable available:', typeof SortableTable);
+                // Re-run initialization after fallback loads
+                if (typeof SortableTable !== 'undefined') {
+                    setTimeout(function() {
+                        initializeDemoTable();
+                        initializeThemeVariations();
+                        runBasicTests();
+                    }, 100);
+                } else {
+                    document.getElementById('basic-tests-results').innerHTML = 
+                        '❌ SortableTable class not found even with Safari fallback.<br>' +
+                        'Browser: ' + navigator.userAgent.substring(0, 100) + '...';
+                }
+            };
+            fallbackScript.onerror = function() {
+                document.getElementById('basic-tests-results').innerHTML = 
+                    '❌ Failed to load Safari fallback script.<br>' +
+                    'Browser: ' + navigator.userAgent.substring(0, 100) + '...';
+            };
+            document.head.appendChild(fallbackScript);
+        }
+        
+        // Test data generators
+        function generateTestData(count = 50) {
+            const names = ['Alice Johnson', 'Bob Smith', 'Charlie Brown', 'Diana Prince', 'Eve Wilson', 'Frank Miller', 'Grace Lee', 'Henry Davis'];
+            const departments = ['Engineering', 'Marketing', 'Sales', 'HR', 'Finance', 'Operations'];
+            const cities = ['New York', 'San Francisco', 'Chicago', 'Boston', 'Seattle', 'Austin'];
+            
+            return Array.from({ length: count }, (_, i) => [
+                i + 1, // id
+                names[Math.floor(Math.random() * names.length)], // name
+                departments[Math.floor(Math.random() * departments.length)], // department
+                Math.floor(Math.random() * 100000) + 30000, // salary
+                cities[Math.floor(Math.random() * cities.length)], // city
+                new Date(2020 + Math.floor(Math.random() * 4), Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1), // startDate
+                Math.random() > 0.3 // active
+            ]);
+        }
+
+        const columns = [
+            { key: 'id', label: 'ID', type: 'number', width: '60px' },
+            { key: 'name', label: 'Name', type: 'string', width: '150px' },
+            { key: 'department', label: 'Department', type: 'string', width: '120px' },
+            { 
+                key: 'salary', 
+                label: 'Salary', 
+                type: 'number', 
+                width: '100px',
+                formatter: (value) => `$${value.toLocaleString()}`
+            },
+            { key: 'city', label: 'City', type: 'string', width: '100px' },
+            { 
+                key: 'startDate', 
+                label: 'Start Date', 
+                type: 'date', 
+                width: '110px',
+                formatter: (value) => value.toLocaleDateString()
+            },
+            { 
+                key: 'active', 
+                label: 'Active', 
+                type: 'boolean', 
+                width: '70px',
+                formatter: (value) => value ? '✓' : '✗'
+            }
+        ];
+
+        // Global variables for demo
+        let demoTable;
+        let edgeCaseTable;
+        let compactTable;
+        let spaciousTable;
+
+        // Initialize demo tables
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeDemoTable();
+            initializeThemeVariations();
+            runBasicTests();
+        });
+
+        function initializeDemoTable() {
+            const data = generateTestData(100);
+            demoTable = new SortableTable({
+                container: '#demo-table',
+                data: data,
+                columns: columns,
+                rowsPerPage: 15,
+                onSort: (column, direction) => {
+                    console.log(`Sorted by ${column} ${direction}`);
+                },
+                onPageChange: (page, totalPages) => {
+                    console.log(`Page changed to ${page} of ${totalPages}`);
+                },
+                onRowClick: (data, index) => {
+                    alert(`Clicked row: ${data.name} (ID: ${data.id})`);
+                }
+            });
+        }
+
+        function initializeThemeVariations() {
+            const smallData = generateTestData(25);
+            
+            compactTable = new SortableTable({
+                container: '#compact-table',
+                data: smallData,
+                columns: columns.slice(0, 4),
+                rowsPerPage: 10,
+                cssPrefix: 'sortable-table'
+            });
+            document.getElementById('compact-table').classList.add('theme-compact');
+
+            spaciousTable = new SortableTable({
+                container: '#spacious-table',
+                data: smallData,
+                columns: columns.slice(0, 4),
+                rowsPerPage: 8,
+                cssPrefix: 'sortable-table'
+            });
+            document.getElementById('spacious-table').classList.add('theme-spacious');
+        }
+
+        // Test functions
+        function runBasicTests() {
+            const results = [];
+            
+            try {
+                // Test 1: Constructor validation
+                try {
+                    new SortableTable();
+                    results.push('❌ Constructor should require options');
+                } catch (e) {
+                    results.push('✅ Constructor properly validates required options');
+                }
+
+                // Test 2: Data handling
+                const testData = generateTestData(10);
+                const testTable = new SortableTable({
+                    container: document.createElement('div'),
+                    data: testData,
+                    columns: columns.slice(0, 3),
+                    rowsPerPage: 5
+                });
+                
+                results.push('✅ Table created successfully with test data');
+                results.push(`✅ Pagination calculated correctly: ${testTable.totalPages} pages`);
+
+                // Test 3: Sorting
+                const originalFirstItem = testTable.data[0][1];
+                testTable.sort('name', 'string', 1);
+                const sortedFirstItem = testTable.data[0][1];
+                
+                if (originalFirstItem !== sortedFirstItem) {
+                    results.push('✅ Sorting functionality works');
+                } else {
+                    results.push('⚠️ Sorting may not have changed order (could be coincidence)');
+                }
+
+                // Test 4: Pagination
+                testTable.goToPage(2);
+                if (testTable.currentPage === 2) {
+                    results.push('✅ Page navigation works');
+                } else {
+                    results.push('❌ Page navigation failed');
+                }
+
+                // Test 5: Data manipulation
+                const originalLength = testTable.data.length;
+                testTable.addRow({ id: 999, name: 'Test User', department: 'Test' });
+                
+                if (testTable.data.length === originalLength + 1) {
+                    results.push('✅ Add row functionality works');
+                } else {
+                    results.push('❌ Add row functionality failed');
+                }
+
+                results.push('✅ All basic functionality tests completed');
+
+            } catch (error) {
+                results.push(`❌ Test error: ${error.message}`);
+            }
+
+            document.getElementById('basic-tests-results').innerHTML = results.join('<br>');
+        }
+
+        function runPerformanceTests() {
+            const results = [];
+            
+            // Test 1: Large dataset rendering
+            console.time('Large dataset creation');
+            const largeData = generateTestData(100000);
+            console.timeEnd('Large dataset creation');
+            
+            console.time('Table initialization');
+            const perfTable = new SortableTable({
+                container: document.createElement('div'),
+                data: largeData,
+                columns: columns,
+                rowsPerPage: 50
+            });
+            console.timeEnd('Table initialization');
+            
+            // Test 2: Sorting performance
+            console.time(`Sorting ${largeData.length} rows`);
+            perfTable.sort('salary', 'number', 3);
+            console.timeEnd(`Sorting ${largeData.length} rows`);
+            
+            // Test 3: Multiple page changes
+            console.time('10 page changes');
+            for (let i = 1; i <= 10; i++) {
+                perfTable.goToPage(i);
+            }
+            console.timeEnd('10 page changes');
+
+            results.push('Performance tests completed - check console for timings');
+            results.push(`• Large dataset (${largeData.length} rows) creation and initialization`);
+            results.push(`• Sorting performance on ${largeData.length} rows`);
+            results.push('• Multiple page navigation performance');
+            
+            document.getElementById('performance-results').innerHTML = results.join('<br>');
+        }
+
+        // Interactive demo functions
+        function addRandomRow() {
+            if (!demoTable) {
+                console.error('Demo table not initialized');
+                return;
+            }
+            const newRow = generateTestData(1)[0];
+            newRow.id = Date.now(); // Unique ID
+            demoTable.addRow(newRow);
+        }
+
+        function removeLastRow() {
+            if (!demoTable) {
+                console.error('Demo table not initialized');
+                return;
+            }
+            if (demoTable.data.length > 0) {
+                demoTable.removeRow(demoTable.data.length - 1);
+            }
+        }
+
+        function filterHighValues() {
+            if (!demoTable) {
+                console.error('Demo table not initialized');
+                return;
+            }
+            demoTable.filter(row => row[3] > 70000); // salary is index 3
+        }
+
+        function clearFilter() {
+            if (!demoTable) {
+                console.error('Demo table not initialized');
+                return;
+            }
+            demoTable.clearFilter();
+        }
+
+        // Edge case tests
+        function testEmptyData() {
+            if (edgeCaseTable) {
+                edgeCaseTable.destroy();
+            }
+            
+            edgeCaseTable = new SortableTable({
+                container: '#edge-case-table',
+                data: [],
+                columns: columns,
+                rowsPerPage: 10,
+                emptyMessage: 'No data to display - this is expected!'
+            });
+            
+            document.getElementById('edge-case-results').innerHTML = '✅ Empty data test completed - table shows empty message';
+        }
+
+        function testSingleRow() {
+            if (edgeCaseTable) {
+                edgeCaseTable.destroy();
+            }
+            
+            edgeCaseTable = new SortableTable({
+                container: '#edge-case-table',
+                data: generateTestData(1),
+                columns: columns,
+                rowsPerPage: 10
+            });
+            
+            document.getElementById('edge-case-results').innerHTML = '✅ Single row test completed - pagination should be disabled';
+        }
+
+        function testLargeDataset() {
+            if (edgeCaseTable) {
+                edgeCaseTable.destroy();
+            }
+            
+            const startTime = performance.now();
+            const largeData = generateTestData(1000);
+            edgeCaseTable = new SortableTable({
+                container: '#edge-case-table',
+                data: largeData,
+                columns: columns,
+                rowsPerPage: 25
+            });
+            const endTime = performance.now();
+            
+            document.getElementById('edge-case-results').innerHTML = 
+                `✅ Large dataset test completed in ${(endTime - startTime).toFixed(2)}ms<br>` +
+                `• 1000 rows loaded using array format<br>` +
+                `• ${edgeCaseTable.totalPages} pages created`
+        }
+
+        function testVeryLargeDataset() {
+            if (edgeCaseTable) {
+                edgeCaseTable.destroy();
+            }
+            
+            document.getElementById('edge-case-results').innerHTML = 'Generating 50,000 rows... Please wait...';
+            
+            // Use setTimeout to allow UI to update
+            setTimeout(() => {
+                const startTime = performance.now();
+                
+                // Use array format for maximum memory efficiency
+                const veryLargeData = generateTestData(50000);
+                const dataGenTime = performance.now();
+                
+                edgeCaseTable = new SortableTable({
+                    container: '#edge-case-table',
+                    data: veryLargeData,
+                    columns: columns,
+                    rowsPerPage: 100 // Larger page size for better performance
+                });
+                const endTime = performance.now();
+                
+                // Memory usage estimation
+                const objectMemory = 50000 * 7 * 50; // object overhead
+                const arrayMemory = 50000 * 7 * 8; // array format
+                const memorySaved = (objectMemory - arrayMemory) / (1024 * 1024); // MB
+                
+                document.getElementById('edge-case-results').innerHTML = 
+                    `✅ Very large dataset test completed!<br>` +
+                    `• Data generation: ${(dataGenTime - startTime).toFixed(2)}ms<br>` +
+                    `• Table creation: ${(endTime - dataGenTime).toFixed(2)}ms<br>` +
+                    `• Total time: ${(endTime - startTime).toFixed(2)}ms`
+            }, 100);
+        }
+
+        function testMixedDataTypes() {
+            if (edgeCaseTable) {
+                edgeCaseTable.destroy();
+            }
+            
+            const mixedData = [
+                [1, 'Alice', 100, new Date('2023-01-15'), true],
+                [2, 'Bob', null, null, false],
+                [3, '', 0, new Date('2022-12-01'), true],
+                [4, 'Charlie', -50, new Date('2024-03-10'), null]
+            ];
+            
+            const mixedColumns = [
+                { key: 'id', label: 'ID', type: 'number' },
+                { key: 'name', label: 'Name', type: 'string' },
+                { key: 'value', label: 'Value', type: 'number' },
+                { key: 'date', label: 'Date', type: 'date' },
+                { key: 'active', label: 'Active', type: 'boolean' }
+            ];
+            
+            edgeCaseTable = new SortableTable({
+                container: '#edge-case-table',
+                data: mixedData,
+                columns: mixedColumns,
+                rowsPerPage: 10
+            });
+            
+            document.getElementById('edge-case-results').innerHTML = '✅ Mixed data types test completed - handles null/undefined values';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+{
+  "name": "@ymaxpoletto/sortable-table",
+  "version": "1.0.0",
+  "main": "src/sortable-table.js",
+  "files": ["src/", "dist/"],
+  "keywords": ["table", "sortable", "pagination"]
+}
