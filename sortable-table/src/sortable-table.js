@@ -42,6 +42,9 @@ class SortableTable {
         } else {
             this.currentSort = { column: null, direction: 'asc' };
         }
+
+        // Filter state
+        this.currentFilter = null;
         if (this.currentSort.column) {
             this._sortData(this.columns.findIndex(col => col.key === this.currentSort.column),
                 this.columns.find(col => col.key === this.currentSort.column).type,
@@ -283,7 +286,8 @@ class SortableTable {
             const row = e.target.closest(`.${this.cssPrefix}-row`);
             if (row) {
                 const index = parseInt(row.dataset.index);
-                const data = this.originalData[index];
+                // Get the row data from the filtered/sorted data array, not originalData
+                const data = this.data[index];
                 this.onRowClick(data, index, e);
             }
         });
@@ -322,7 +326,8 @@ class SortableTable {
     }
 
     _sortData(columnIndex, columnType, ascending) {
-        this.data.sort((a, b) => {
+        // Sort both originalData and data to maintain consistency
+        const sortFn = (a, b) => {
             const aVal = a[columnIndex] ?? '';
             const bVal = b[columnIndex] ?? '';
 
@@ -344,7 +349,17 @@ class SortableTable {
             }
 
             return ascending ? comparison : -comparison;
-        });
+        };
+
+        // Sort the source data
+        this.originalData.sort(sortFn);
+
+        // Re-apply current filter to get sorted, filtered data
+        if (this.currentFilter) {
+            this.data = this.originalData.filter(this.currentFilter);
+        } else {
+            this.data = [...this.originalData];
+        }
     }
 
 
@@ -433,27 +448,38 @@ class SortableTable {
     }
 
     addRow(rowData) {
-        this.data.push(rowData);
         this.originalData.push(rowData);
+
+        // Only add to filtered data if it passes the current filter (or no filter is active)
+        if (!this.currentFilter || this.currentFilter(rowData)) {
+            this.data.push(rowData);
+        }
+
         this.totalPages = Math.ceil(this.data.length / this.rowsPerPage);
         this.updateTable();
     }
 
-    removeRow(index) {
-        if (index >= 0 && index < this.data.length) {
-            this.data.splice(index, 1);
-            this.originalData.splice(index, 1);
-            this.totalPages = Math.ceil(this.data.length / this.rowsPerPage);
+    removeRows(predicate) {
+        // Remove from original data
+        const originalLength = this.originalData.length;
+        this.originalData = this.originalData.filter(row => !predicate(row));
+        const removedCount = originalLength - this.originalData.length;
 
-            if (this.currentPage > this.totalPages) {
-                this.currentPage = Math.max(1, this.totalPages);
-            }
+        // Remove from filtered/sorted data
+        this.data = this.data.filter(row => !predicate(row));
 
-            this.updateTable();
+        this.totalPages = Math.ceil(this.data.length / this.rowsPerPage);
+
+        if (this.currentPage > this.totalPages) {
+            this.currentPage = Math.max(1, this.totalPages);
         }
+
+        this.updateTable();
+        return removedCount;
     }
 
     filter(predicate) {
+        this.currentFilter = predicate;
         this.data = this.originalData.filter(predicate);
         this.totalPages = Math.ceil(this.data.length / this.rowsPerPage);
         this.currentPage = 1;
@@ -461,6 +487,7 @@ class SortableTable {
     }
 
     clearFilter() {
+        this.currentFilter = null;
         this.data = [...this.originalData];
         this.totalPages = Math.ceil(this.data.length / this.rowsPerPage);
         this.currentPage = 1;
