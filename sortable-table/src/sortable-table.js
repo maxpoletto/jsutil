@@ -18,10 +18,10 @@ class SortableTable {
         }
 
         // Set up configuration with defaults
-        this.container = typeof options.container === 'string' 
+        this.container = typeof options.container === 'string'
             ? document.querySelector(options.container)
             : options.container;
-        
+
         if (!this.container) {
             throw new Error('Container element not found');
         }
@@ -34,15 +34,15 @@ class SortableTable {
         this.allowSorting = options.allowSorting !== false;
         this.cssPrefix = options.cssPrefix || 'sortable-table';
         this.emptyMessage = options.emptyMessage || 'No data available';
-        
+
         // Pagination state
         this.currentPage = 1;
         this.totalPages = Math.ceil(this.data.length / this.rowsPerPage);
-        
+
         // Sorting state
-        this.currentSort = { 
-            column: null, 
-            direction: 'asc' 
+        this.currentSort = {
+            column: null,
+            direction: 'asc'
         };
 
         // Event callbacks
@@ -91,7 +91,7 @@ class SortableTable {
                     <button class="first-page" data-action="first">&lt;&lt;</button>
                     <button class="prev-page" data-action="prev">&lt;</button>
                     <span class="page-info">
-                        Page <span class="current-page-number">${this.currentPage}</span> 
+                        Page <span class="current-page-number">${this.currentPage}</span>
                         of <span class="total-pages">${this.totalPages}</span>
                     </span>
                     <button class="next-page" data-action="next">&gt;</button>
@@ -112,9 +112,9 @@ class SortableTable {
             ].filter(Boolean).join(' ');
 
             return `
-                <th class="${classes}" 
-                    data-column="${col.key}" 
-                    data-index="${index}" 
+                <th class="${classes}"
+                    data-column="${col.key}"
+                    data-index="${index}"
                     data-type="${col.type || 'string'}"
                     ${col.width ? `style="width: ${col.width}"` : ''}>
                     ${col.label}
@@ -305,7 +305,7 @@ class SortableTable {
         if (page >= 1 && page <= this.totalPages && page !== this.currentPage) {
             this.currentPage = page;
             this.updateTable();
-            
+
             if (this.onPageChange) {
                 this.onPageChange(page, this.totalPages);
             }
@@ -315,7 +315,7 @@ class SortableTable {
     sort(columnKey, columnType, columnIndex) {
         const isCurrentColumn = this.currentSort.column === columnKey;
         const newDirection = isCurrentColumn && this.currentSort.direction === 'asc' ? 'desc' : 'asc';
-        
+
         this.currentSort = {
             column: columnKey,
             direction: newDirection
@@ -324,9 +324,9 @@ class SortableTable {
         this.data.sort((a, b) => {
             const aVal = a[columnIndex] ?? '';
             const bVal = b[columnIndex] ?? '';
-            
+
             let comparison = 0;
-            
+
             switch (columnType) {
                 case 'number':
                     const aNum = parseFloat(aVal) || 0;
@@ -341,7 +341,7 @@ class SortableTable {
                 default:
                     comparison = String(aVal).toLowerCase().localeCompare(String(bVal).toLowerCase());
             }
-            
+
             return newDirection === 'asc' ? comparison : -comparison;
         });
 
@@ -374,7 +374,7 @@ class SortableTable {
         // Update page numbers
         const currentPageSpan = pagination.querySelector('.current-page-number');
         const totalPagesSpan = pagination.querySelector('.total-pages');
-        
+
         if (currentPageSpan) currentPageSpan.textContent = this.currentPage;
         if (totalPagesSpan) totalPagesSpan.textContent = this.totalPages;
 
@@ -431,11 +431,11 @@ class SortableTable {
             this.data.splice(index, 1);
             this.originalData.splice(index, 1);
             this.totalPages = Math.ceil(this.data.length / this.rowsPerPage);
-            
+
             if (this.currentPage > this.totalPages) {
                 this.currentPage = Math.max(1, this.totalPages);
             }
-            
+
             this.updateTable();
         }
     }

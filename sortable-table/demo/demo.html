@@ -13,29 +13,29 @@
             background: #f0f0f0;
             min-height: 100vh;
         }
-        
+
         .demo-container {
             max-width: 1200px;
             margin: 0 auto;
         }
-        
+
         .header {
             text-align: center;
             color: #333;
             margin-bottom: 30px;
         }
-        
+
         .header h1 {
             font-size: 2.5rem;
             margin-bottom: 10px;
         }
-        
+
         .header p {
             font-size: 1.2rem;
             opacity: 0.9;
             margin: 0;
         }
-        
+
         .demo-section {
             background: white;
             border-radius: 12px;
@@ -43,21 +43,21 @@
             margin-bottom: 30px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         }
-        
+
         .demo-section h2 {
             color: #333;
             margin-top: 0;
             margin-bottom: 20px;
             font-size: 1.8rem;
         }
-        
+
         .controls {
             display: flex;
             gap: 12px;
             margin-bottom: 20px;
             flex-wrap: wrap;
         }
-        
+
         .btn {
             padding: 10px 20px;
             border: none;
@@ -69,26 +69,26 @@
             background: #e2e8f0;
             color: #4a5568;
         }
-        
+
         .btn:hover {
             background: #cbd5e0;
             transform: translateY(-2px);
         }
-        
+
         .table-container {
             height: 500px;
             border-radius: 8px;
             overflow: hidden;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
-        
+
         .stats {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 20px;
             margin: 20px 0;
         }
-        
+
         .stat-card {
             background: #f8fafc;
             padding: 20px;
@@ -96,14 +96,14 @@
             text-align: center;
             border: 1px solid #e2e8f0;
         }
-        
+
         .stat-number {
             font-size: 2rem;
             font-weight: bold;
             color: #667eea;
             margin-bottom: 5px;
         }
-        
+
         .stat-label {
             color: #64748b;
             font-size: 0.9rem;
@@ -115,25 +115,25 @@
             gap: 20px;
             margin: 30px 0;
         }
-        
+
         .feature-card {
             background: #f8fafc;
             padding: 20px;
             border-radius: 8px;
             border-left: 4px solid #667eea;
         }
-        
+
         .feature-card h3 {
             margin-top: 0;
             color: #2d3748;
         }
-        
+
         .feature-card ul {
             margin: 0;
             padding-left: 20px;
             color: #4a5568;
         }
-        
+
         .code-example {
             background: #f0f0f0;
             color: darkslategrey;
@@ -145,28 +145,28 @@
             overflow-x: auto;
             white-space: pre-wrap;
         }
-        
+
         .highlight {
             color: #32ad61;
         }
-        
+
         @media (max-width: 768px) {
             body {
                 padding: 10px;
             }
-            
+
             .header h1 {
                 font-size: 2rem;
             }
-            
+
             .demo-section {
                 padding: 20px;
             }
-            
+
             .controls {
                 justify-content: center;
             }
-            
+
             .table-container {
                 height: 400px;
             }
@@ -179,12 +179,12 @@
             <h1>SortableTable</h1>
             <p>A powerful, reusable, and configurable table component</p>
         </div>
-        
+
         <!-- Main Demo -->
         <div class="demo-section">
             <h2>Interactive Demo</h2>
             <p>Click column headers to sort, use pagination controls, and click the page number to jump to a specific page.</p>
-            
+
             <div class="controls">
                 <button class="btn" onclick="addRandomEmployee()">Add Employee</button>
                 <button class="btn" onclick="filterHighEarners()">Show High Earners</button>
@@ -193,9 +193,9 @@
 
                 <button class="btn" onclick="removeRandomEmployee()">Remove Employee</button>
             </div>
-            
+
             <div id="main-table" class="table-container"></div>
-            
+
             <div class="stats">
                 <div class="stat-card">
                     <div class="stat-number" id="total-employees">0</div>
@@ -215,16 +215,16 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Usage Example -->
         <div class="demo-section">
             <h2>Usage Example</h2>
-            
+
             <div class="code-example">
 <span class="highlight">// Define your columns</span>
 const columns = [
     { key: 'name', label: 'Name', type: 'string' },
-    { key: 'salary', label: 'Salary', type: 'number', 
+    { key: 'salary', label: 'Salary', type: 'number',
       formatter: (value) => `$${value.toLocaleString()}` },
     { key: 'startDate', label: 'Start Date', type: 'date' }
 ];
@@ -271,25 +271,25 @@ const table = new SortableTable({
             { key: 'id', label: 'ID', type: 'number', width: '60px' },
             { key: 'name', label: 'Employee Name', type: 'string', width: '180px' },
             { key: 'department', label: 'Department', type: 'string', width: '120px' },
-            { 
-                key: 'salary', 
-                label: 'Annual Salary', 
-                type: 'number', 
+            {
+                key: 'salary',
+                label: 'Annual Salary',
+                type: 'number',
                 width: '130px',
                 formatter: (value) => `$${value.toLocaleString()}`
             },
             { key: 'city', label: 'Location', type: 'string', width: '100px' },
-            { 
-                key: 'startDate', 
-                label: 'Start Date', 
-                type: 'date', 
+            {
+                key: 'startDate',
+                label: 'Start Date',
+                type: 'date',
                 width: '110px',
                 formatter: (value) => value.toLocaleDateString()
             },
-            { 
-                key: 'active', 
-                label: 'Status', 
-                type: 'boolean', 
+            {
+                key: 'active',
+                label: 'Status',
+                type: 'boolean',
                 width: '80px',
                 formatter: (value) => value ? '✅ Active' : '❌ Inactive'
             },
@@ -327,16 +327,16 @@ const table = new SortableTable({
                     alert(`Employee Details:\n\nID: ${data[0]}\nName: ${data[1]}\nDepartment: ${data[2]}\nSalary: $${data[3].toLocaleString()}\nCity: ${data[4]}\nStart Date: ${data[5].toLocaleDateString()}\nActive: ${data[6] ? 'Yes' : 'No'}\nEmail: ${data[7]}`);
                 }
             });
-            
+
             updateStats();
         }
 
         function updateStats() {
             const totalEmployees = mainTable.data.length;
-            const avgSalary = totalEmployees > 0 
+            const avgSalary = totalEmployees > 0
                 ? Math.round(mainTable.data.reduce((sum, emp) => sum + emp[3], 0) / totalEmployees) // salary is index 3
                 : 0;
-            
+
             document.getElementById('total-employees').textContent = totalEmployees;
             document.getElementById('avg-salary').textContent = `$${avgSalary.toLocaleString()}`;
             document.getElementById('total-pages').textContent = mainTable.totalPages;
@@ -347,11 +347,11 @@ const table = new SortableTable({
         function addRandomEmployee() {
             const newEmployee = generateEmployeeData(1)[0];
             newEmployee[0] = Math.max(...originalData.map(e => e[0])) + 1; // update id
-            
+
             originalData.push(newEmployee);
             mainTable.addRow(newEmployee);
             updateStats();
-            
+
             // Show notification
             showNotification(`Added ${newEmployee[1]} to ${newEmployee[2]}`); // name and department
         }
@@ -360,16 +360,16 @@ const table = new SortableTable({
             if (mainTable.data.length > 0) {
                 const randomIndex = Math.floor(Math.random() * mainTable.data.length);
                 const removedEmployee = mainTable.data[randomIndex];
-                
+
                 // Remove from original data too
                 const originalIndex = originalData.findIndex(e => e[0] === removedEmployee[0]); // compare IDs
                 if (originalIndex !== -1) {
                     originalData.splice(originalIndex, 1);
                 }
-                
+
                 mainTable.removeRow(randomIndex);
                 updateStats();
-                
+
                 showNotification(`Removed ${removedEmployee[1]}`); // name is index 1
             }
         }
@@ -412,12 +412,12 @@ const table = new SortableTable({
             notification.textContent = message;
 
             document.body.appendChild(notification);
-            
+
             // Animate in
             setTimeout(() => {
                 notification.style.transform = 'translateX(0)';
             }, 100);
-            
+
             // Remove after 3 seconds
             setTimeout(() => {
                 notification.style.transform = 'translateX(400px)';
