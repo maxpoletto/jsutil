@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SortableTable Tests</title>
-    <link rel="stylesheet" href="../src/sortable-table.css">
+    <link rel="stylesheet" href="sortable-table.css">
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -161,44 +161,8 @@
         </div>
     </div>
 
-    <script src="../src/sortable-table.js"></script>
+    <script src="sortable-table.js"></script>
     <script>
-        // Debug: Check if SortableTable is available
-        console.log('SortableTable available:', typeof SortableTable);
-        console.log('Window SortableTable:', window.SortableTable);
-        
-        // Safari compatibility check and fallback
-        if (typeof SortableTable === 'undefined') {
-            console.error('SortableTable is not defined. Loading Safari-compatible fallback...');
-            console.log('Browser:', navigator.userAgent);
-            
-            // Load Safari fallback
-            var fallbackScript = document.createElement('script');
-            fallbackScript.src = '../src/sortable-table-safari-fallback.js';
-            fallbackScript.onload = function() {
-                console.log('Safari fallback loaded. SortableTable available:', typeof SortableTable);
-                // Re-run initialization after fallback loads
-                if (typeof SortableTable !== 'undefined') {
-                    setTimeout(function() {
-                        initializeDemoTable();
-                        initializeThemeVariations();
-                        runBasicTests();
-                    }, 100);
-                } else {
-                    document.getElementById('basic-tests-results').innerHTML = 
-                        '❌ SortableTable class not found even with Safari fallback.<br>' +
-                        'Browser: ' + navigator.userAgent.substring(0, 100) + '...';
-                }
-            };
-            fallbackScript.onerror = function() {
-                document.getElementById('basic-tests-results').innerHTML = 
-                    '❌ Failed to load Safari fallback script.<br>' +
-                    'Browser: ' + navigator.userAgent.substring(0, 100) + '...';
-            };
-            document.head.appendChild(fallbackScript);
-        }
-        
-        // Test data generators
         function generateTestData(count = 50) {
             const names = ['Alice Johnson', 'Bob Smith', 'Charlie Brown', 'Diana Prince', 'Eve Wilson', 'Frank Miller', 'Grace Lee', 'Henry Davis'];
             const departments = ['Engineering', 'Marketing', 'Sales', 'HR', 'Finance', 'Operations'];
