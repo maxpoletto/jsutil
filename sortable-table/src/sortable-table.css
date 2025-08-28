@@ -23,7 +23,6 @@
 /* Controls and Pagination */
 .sortable-table-controls {
     padding: calc(var(--st-padding) * 2);
-    border-bottom: 1px solid var(--st-border-color);
     display: flex;
     justify-content: center;
     align-items: center;
