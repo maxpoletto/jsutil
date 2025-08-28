@@ -23,12 +23,12 @@ class SortableTable {
             : options.container;
 
         if (!this.container) {
-            throw new Error('Container element not found');
+            throw new Error(`Container element not found (${options.container})`);
         }
 
         this.data = [...options.data]; // Create a copy to avoid mutating original
         this.originalData = [...options.data]; // Keep original for filtering
-        this.columns = options.columns;
+        this.columns = [...options.columns];
         this.rowsPerPage = options.rowsPerPage || 25;
         this.showPagination = options.showPagination !== false;
         this.allowSorting = options.allowSorting !== false;
@@ -65,7 +65,11 @@ class SortableTable {
     }
 
     init() {
-        this.container.className = `${this.cssPrefix}-container`;
+        // Append the container class if not already present
+        const containerClass = `${this.cssPrefix}-container`;
+        if (!this.container.classList.contains(containerClass)) {
+            this.container.classList.add(containerClass);
+        }
         this.render();
     }
 
@@ -499,9 +503,9 @@ class SortableTable {
     }
 
     destroy() {
-        // Clean up event listeners and DOM
         this.container.innerHTML = '';
-        this.container.className = '';
+        this.container.classList.remove(this.cssPrefix + '-container');
+        this.data = this.originalData = this.columns = this.currentFilter = null;
     }
 }
 
