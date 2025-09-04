@@ -53,7 +53,7 @@ class SortableTable {
 
         // Pagination state
         this.currentPage = 1;
-        this.totalPages = Math.ceil(this.data.length / this.rowsPerPage);
+        this.totalPages = Math.max(1, Math.ceil(this.data.length / this.rowsPerPage));
 
         // Event callbacks
         this.onSort = options.onSort || null;
