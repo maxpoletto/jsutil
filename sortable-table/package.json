@@ -1,6 +1,6 @@
 {
   "name": "@maxpoletto/sortable-table",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "A reusable, configurable table component with sorting, filtering, and pagination",
   "main": "src/sortable-table.js",
   "browser": "src/sortable-table.js",
