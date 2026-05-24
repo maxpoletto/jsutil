@@ -3,4 +3,7 @@ PORT=8000
 test-server:
 	python3 -m http.server ${PORT}
 
-.PHONY: test-server
+publish:
+	npm publish
+
+.PHONY: test-server publish
