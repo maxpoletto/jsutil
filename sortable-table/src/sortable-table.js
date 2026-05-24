@@ -95,6 +95,7 @@ class SortableTable {
     }
 
     generatePaginationHTML() {
+        const displayTotal = Math.max(1, this.totalPages);
         return `
             <div class="${this.cssPrefix}-controls">
                 <div class="${this.cssPrefix}-pagination">
@@ -102,7 +103,7 @@ class SortableTable {
                     <button class="prev-page" data-action="prev">&lt;</button>
                     <span class="page-info">
                         Page <span class="current-page-number">${this.currentPage}</span>
-                        of <span class="total-pages">${this.totalPages}</span>
+                        of <span class="total-pages">${displayTotal}</span>
                     </span>
                     <button class="next-page" data-action="next">&gt;</button>
                     <button class="last-page" data-action="last">&gt;&gt;</button>
@@ -406,7 +407,7 @@ class SortableTable {
         const totalPagesSpan = pagination.querySelector('.total-pages');
 
         if (currentPageSpan) currentPageSpan.textContent = this.currentPage;
-        if (totalPagesSpan) totalPagesSpan.textContent = this.totalPages;
+        if (totalPagesSpan) totalPagesSpan.textContent = Math.max(1, this.totalPages);
 
         // Update button states
         const firstBtn = pagination.querySelector('.first-page');
