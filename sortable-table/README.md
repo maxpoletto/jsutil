@@ -12,6 +12,7 @@ A reusable and configurable sortable table component with good pagination and th
 - Navigation controls: First (`<<`), Previous (`<`), Next (`>`), Last (`>>`) buttons, disabled when not applicable
 - Editable page number: click the current page number to jump to any page, press Enter to confirm, Escape to cancel
 - Configurable page sizes
+- Localizable page indicator via the `pageInfo` template option
 
 ### Customization
 - CSS custom properties for easy theming
@@ -77,6 +78,10 @@ const table = new SortableTable({
     allowSorting: true,                // Allow column sorting (default: true)
     cssPrefix: 'sortable-table',       // CSS class prefix (default: 'sortable-table')
     emptyMessage: 'No data available', // Message when no data (default: 'No data available')
+    pageInfo: 'Page {current} of {total}', // Pagination text; include both
+                                       // {current}/{total}, each replaced once
+                                       // with the page-number controls
+                                       // (default: 'Page {current} of {total}')
     sort: { column: 'name', ascending: true }, // Initial sort
 
     // Event callbacks

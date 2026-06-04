@@ -347,6 +347,45 @@
                     results.push('❌ Add row functionality failed');
                 }
 
+                // Test 6: Pagination text localization
+                const pagingData = generateTestData(10);
+                const pageInfoText = (table) =>
+                    table.container.querySelector('.page-info')?.textContent.replace(/\s+/g, ' ').trim();
+
+                const defaultPaging = new SortableTable({
+                    container: document.createElement('div'),
+                    data: pagingData,
+                    columns: columns.slice(0, 3),
+                    rowsPerPage: 5,
+                });
+                if (pageInfoText(defaultPaging) === 'Page 1 of 2') {
+                    results.push('✅ Default pagination text is English ("Page 1 of 2")');
+                } else {
+                    results.push(`❌ Default pagination text wrong: "${pageInfoText(defaultPaging)}"`);
+                }
+
+                const localizedPaging = new SortableTable({
+                    container: document.createElement('div'),
+                    data: pagingData,
+                    columns: columns.slice(0, 3),
+                    rowsPerPage: 5,
+                    pageInfo: 'Pagina {current} di {total}',
+                });
+                if (pageInfoText(localizedPaging) === 'Pagina 1 di 2') {
+                    results.push('✅ pageInfo option localizes pagination ("Pagina 1 di 2")');
+                } else {
+                    results.push(`❌ pageInfo option failed: "${pageInfoText(localizedPaging)}"`);
+                }
+
+                // The substituted spans must stay the ones updatePaginationState
+                // mutates, so the indicator tracks navigation.
+                localizedPaging.goToPage(2);
+                if (pageInfoText(localizedPaging) === 'Pagina 2 di 2') {
+                    results.push('✅ localized pagination updates after navigation ("Pagina 2 di 2")');
+                } else {
+                    results.push(`❌ localized pagination did not update: "${pageInfoText(localizedPaging)}"`);
+                }
+
                 results.push('✅ All basic functionality tests completed');
 
             } catch (error) {
