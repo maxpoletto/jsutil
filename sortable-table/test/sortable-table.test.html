@@ -299,6 +299,33 @@
                 results.push('✅ Table created successfully with test data');
                 results.push(`✅ Pagination calculated correctly: ${testTable.totalPages} pages`);
 
+                // Test 2b: HTML is escaped by default, trusted HTML is opt-in
+                const unsafeContainer = document.createElement('div');
+                new SortableTable({
+                    container: unsafeContainer,
+                    data: [['<img src=x onerror=alert(1)>', '<strong>Trusted</strong>']],
+                    columns: [
+                        { key: 'unsafe', label: 'Unsafe <em>label</em>' },
+                        { key: 'trusted', label: 'Trusted', formatter: v => v, trustedHTML: true }
+                    ],
+                    showPagination: false
+                });
+                const unsafeCell = unsafeContainer.querySelector('td[data-column="unsafe"]');
+                const trustedCell = unsafeContainer.querySelector('td[data-column="trusted"]');
+                const unsafeHeader = unsafeContainer.querySelector('th[data-column="unsafe"]');
+                if (unsafeCell?.textContent === '<img src=x onerror=alert(1)>'
+                        && !unsafeCell.querySelector('img')
+                        && unsafeHeader?.textContent.includes('Unsafe <em>label</em>')) {
+                    results.push('✅ Untrusted cell and header HTML is escaped');
+                } else {
+                    results.push('❌ Untrusted HTML escaping failed');
+                }
+                if (trustedCell?.querySelector('strong')?.textContent === 'Trusted') {
+                    results.push('✅ trustedHTML column renders formatter markup');
+                } else {
+                    results.push('❌ trustedHTML column did not render formatter markup');
+                }
+
                 // Test 3: Sorting (ascending)
                 testTable.sort('name', 'string', true);
                 let isAscending = true;

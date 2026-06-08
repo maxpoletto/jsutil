@@ -18,6 +18,7 @@ A reusable and configurable sortable table component with good pagination and th
 - CSS custom properties for easy theming
 - A few built-in themes (compact, spacious, minimal, bordered, solid)
 - Custom formatter functions
+- HTML-safe rendering by default, with explicit trusted HTML opt-in
 - Responsive design with mobile-optimized layouts
 
 ### Efficiency
@@ -106,10 +107,14 @@ const columns = [
         cellClassName: 'cell-class',   // Optional: custom cell CSS class
         formatter: (value, row) => {   // Optional: custom formatter function
             return `$${value.toLocaleString()}`;
-        }
+        },
+        trustedHTML: false             // Optional: render formatter output as
+                                       // raw HTML only when explicitly true
     }
 ];
 ```
+
+Formatter return values are escaped and rendered as text by default. Set `trustedHTML: true` only for columns whose formatter returns application-controlled markup, such as action buttons or icons. Do not enable it for user-entered data.
 
 ## API Methods
 
